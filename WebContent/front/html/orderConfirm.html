@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link href="../../css/bootstrap.css"  type="text/css" rel="stylesheet"/>
+        <style type="text/css">
+             body{
+             	
+             	background-color: #EEEEEE;
+             }
+        	.jumbotron h1{
+        		color: white;
+        		margin-left: 30px;
+        		
+        	}
+        	.jumbotron{
+        		
+        		margin-bottom: 0px;
+        	}
+        	#carousel-example-generic img{
+        		margin: 0 auto;
+        	}
+        	
+        	#carousel-example-generic{
+        		
+        		margin-top: 0px;
+        	}
+        	#leftType{
+        		
+        		background-color: white;
+        		box-shadow: 5px 5px 5px #E5E5E5;
+        	}
+			
+
+        </style>
+	</head>
+	<body>
+		<!--导航条，在顶部固定-->
+		<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+			 <!--导航条的头部-->
+			 <div class="navbar-header">
+			 	<a class="navbar-brand" >
+			 		<img alt="" src="/ShoppingProject/front/upload/shizi.jpg" weight="50" height = "37" >
+			 		
+			 	</a>
+			 	
+			 	 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+				      <span class="sr-only">Toggle navigation</span>
+				      <span class="icon-bar"></span>
+				      <span class="icon-bar"></span>
+				      <span class="icon-bar"></span>
+    			</button>
+			 </div>
+			
+			
+			  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			  	<ul class="nav navbar-nav navbar-right">
+			  		<li><a href="#" id="home"><span class="glyphicon glyphicon-home"></span><span id="home_info">返回首页</span></a></li>
+			  		<li><a href="#" id="login"><span class="glyphicon glyphicon-user"></span><span id="login_info">登录</span></a></li>
+					<li><a href="#"><span class="glyphicon glyphicon-shopping-cart"></span>购物车 <span class="badge" id="shopping_count">13</span></a></li>
+					<li><a href="#"><span class="glyphicon glyphicon-list"></span><span id="customer_btn">个人主页</span></a></li>
+					<li><a href="#"><span class="glyphicon glyphicon-off"></span><span id="cus_exit">退出登录</span></a></li>
+	
+	
+				</ul>
+			  </div>
+			
+		</nav>
+		
+	
+	
+	<div class="modal fade" id="myModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">登录</h4>
+      </div>
+      <div class="modal-body">
+        				<form class="form-horizontal" action="user.do" method="post" id="login_form" name="login_form"> 
+							<div class="form-group">
+								<label class="col-md-4 col-sm-4 control-label">用户名：</label>
+								<div class="col-md-6 ">
+									<input type="text" class="form-control"  required="required" name="cusName" />
+								
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-md-4 col-sm-4 control-label">密码：</label>
+								<div class="col-md-6 ">
+									<input type="password" class="form-control"  required="required" name="cusPwd">
+								
+								</div>
+							</div>
+						
+						
+					
+							
+						</form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary" id="login_btn" form="login_form">登录</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+	
+
+
+          
+          <!--使用bootstrap栅格系统-->
+		<div id="show">  
+		 	<div class="container" style="margin-top: 60px;" id="shoppings">
+
+		  	 
+			</div>
+			
+			<div class="container">
+			<input type="text" style="width: 80%" placeholder="请输入订单备注" name="orderRemark"/>
+		</div>
+			
+			
+		</div>
+		
+		<!-- 提交 -->
+         <div>
+	  		<h2 align="right">
+	  			总价:<span id="result">0</span>
+	  		 	<input type="button" value="结算" class="btn btn-danger" id="settle_btn"/>
+	  		</h2>
+	  	          
+	  	</div>
+
+<script src="../../js/jquery-1.12.3.min.js" type="text/javascript"></script>
+<script src="../../js/bootstrap.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+	landSubShopping();
+	
+		function landSubShopping(){
+			//得到前一个页面选中的购物车Id
+			//从localStorage取出来的是一个由数组中的元素组成的字符串，中间用,隔开
+			var sids = window.localStorage.getItem("sids"); 
+		
+			$.ajax({
+				cache:false,
+				url:"../../getSubShopping.do",
+				type:"POST",
+				data:{"sids":sids},
+				dataType:"json",
+				async:true,
+				error:function(){
+					alert("加载页面时出错");
+				},
+				success:function(data){
+					var shoppingList = data.shoppings;
+				
+					var str="";
+				    var sum=0;
+				    for(var i=0;i<shoppingList.length;i++){
+				    		
+				    	str=str+"<div class=\"panel panel-default\">";
+				    	str=str+"<div class= panel-body>";
+				    	str=str+"<div class= col-md-1>";
+				    	str=str+"<input type= hidden  name= shoppingId value='"+shoppingList[i].shoppingId+"'/>";
+				   		str=str+"</div>";
+				   		str=str+"<div class= col-md-4>";
+				   		str=str+"<img src= ../../"+shoppingList[i].goods.goodsImg+"  width= 100% height = 260px />";
+				   		str=str+"</div>";
+			    		str=str+"<div  class= col-md-7>";
+			    		str=str+"<h2>"+shoppingList[i].goods.goodsName+"</h2>";
+			    		str=str+"<p>价格:<span style=\"color: red;\" class= price >"+shoppingList[i].goods.goodsPrice+"</span>元</p>";
+			    		str=str+"<p>数量:<span class= shoppingCount >"+shoppingList[i].shoppingCount+"</span></p></div></div></div>";
+			    		sum=sum+shoppingList[i].goods.goodsPrice*shoppingList[i].shoppingCount;
+				    			
+				    	}
+			
+				    $("#shoppings").html(str);
+				    
+				    $("#result").text(sum);
+				    
+				    var cusName = data.cusName;
+				    var cusId = data.cusId;
+				    
+				    //结算
+				    click_settle(cusName,cusId);
+				    
+				    
+				    //退出登录按钮
+				  	 click_cus_exit();
+				    
+				    //返回首页
+				  	click_home();
+				    
+					//刷新购物车数量
+					flush_shopping_cart(cusName);
+					
+					//个人主页
+					click_customer_btn(cusName);
+					
+					//点击结算
+					click_settle_btn(sids);
+				}
+				
+			});
+			
+		}
+
+		//结算
+	function click_settle(cusName) {
+		if (cusName != undefined) {
+			$("#login_info").html(cusName + "已登录");
+		}else {
+			$("#login_info").html("登录");
+		}
+	}
+	
+	//点击结算
+	function click_settle_btn(sids){
+	$("#settle_btn").click(function(){
+	var shopArrays = new Array();
+	$(":hidden[name = shoppingId]").each(function(){
+		shopArrays.push($(this).val());
+	});
+	
+	var orderRemark = $(":text[name = orderRemark]").val();
+	var totalPrice = $("#result").text();
+	
+			window.localStorage.setItem("shopArrays", shopArrays);
+			window.localStorage.setItem("sids", shopArrays);
+			window.localStorage.setItem("orderRemark", orderRemark);
+			window.localStorage.setItem("totalPrice", totalPrice);
+			location.href = "/ShoppingProject/front/html/settle.html";
+
+	
+	})
+	}
+	
+	//退出按钮
+	function click_cus_exit() {
+		$("#cus_exit").click(function() {
+			if (confirm("您确定要退出吗？")) {
+				
+				$.ajax({
+					cache:false,
+					type:"POST",
+					url:"../../indexExit.do",
+					async:false,
+					error:function(){
+						alert("退出失败");
+					},
+					success:function(){
+						top.location.href = "/ShoppingProject/front/html/index.html";
+					}
+				});
+				
+			}
+		return false;
+		});
+	}
+
+	//返回首页
+	function click_home(){
+		$("#home_info").click(function(){
+			location.href = "/ShoppingProject/front/html/index.html";
+		});
+	}
+
+	
+	
+	//刷新购物车数量
+	function flush_shopping_cart(cusName){
+		
+		if (cusName != undefined) {
+			
+			$.ajax({
+				cache:false,
+				type:"POST",
+				url:"../../getShoppingCount.do",
+				async:true,
+				error:function(){
+					alert("刷新失败");
+				},
+				success:function(data){
+					$("#shopping_count").html(data);
+				}
+				
+			});
+		}
+	}
+	
+	
+	//个人主页
+	function click_customer_btn(cusName){
+			
+		$("#customer_btn").click(function(){
+			window.localStorage.setItem("cusName", cusName);
+			
+		location.href = "/ShoppingProject/front/html/customer.html";
+			
+		});
+	}
+	
+
+
+
+</script>
+</body>
+</html>
